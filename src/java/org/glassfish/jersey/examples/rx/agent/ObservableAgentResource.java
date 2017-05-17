@@ -55,10 +55,30 @@ public class ObservableAgentResource {
                 });
         
         System.out.println("before subscribe");
+        
+        //See how easy to duplicate the same requests
+        obsv.subscribe(response -> {
+                    response.setProcessingTime((System.nanoTime() - time) / 1000000);
+                });
+        
+        obsv.subscribe(response -> {
+                    response.setProcessingTime((System.nanoTime() - time) / 1000000);
+                });
+        
+        obsv.subscribe(response -> {
+                    response.setProcessingTime((System.nanoTime() - time) / 1000000);
+                });
+        
+        obsv.subscribe(response -> {
+                    response.setProcessingTime((System.nanoTime() - time) / 1000000);
+                });
+        
         obsv.subscribe(response -> {
                     response.setProcessingTime((System.nanoTime() - time) / 1000000);
                     async.resume(response);
                 });
+        
+        
 
     }
 
