@@ -67,10 +67,10 @@ public class CalculationResource {
     public Calculation calculation(@PathParam("from") @DefaultValue("Moon") final String from,
                                    @PathParam("to") final String to) {
 
-        System.out.println("calculation: start: "  + from + "-" + to);
+        System.out.println("REST Server calculation: start: "  + from + "-" + to);
         // Simulate long-running operation.
         Helper.sleep(350);
-        System.out.println("calculation: end: "  + from + "-" + to);
+        System.out.println("REST Server calculation: end: "  + from + "-" + to);
         return new Calculation(from, to, new Random().nextInt(10000));
     }
 }

@@ -43,7 +43,7 @@ public class ObservableAgentResource {
         final long time = System.nanoTime();
         final AgentResponse agentResponse = new AgentResponse();
 
-        Observable.just(agentResponse)
+        Observable<AgentResponse> obsv = Observable.just(agentResponse)
                 .zipWith(visited(), (response, visited) -> {
                     response.setVisited(visited);
                     return response;
@@ -52,8 +52,10 @@ public class ObservableAgentResource {
                 .zipWith(recommended(), (response, recommendations) -> {
                     response.setRecommended(recommendations);
                     return response;
-                })
-                .subscribe(response -> {
+                });
+        
+        System.out.println("before subscribe");
+        obsv.subscribe(response -> {
                     response.setProcessingTime((System.nanoTime() - time) / 1000000);
                     async.resume(response);
                 });
@@ -63,7 +65,7 @@ public class ObservableAgentResource {
     private Observable<List<Destination>> visited() {
         destination.register(RxObservableInvokerProvider.class);
 
-        return destination.path("visited").request()
+        Observable<List<Destination>> o = destination.path("visited").request()
                           // Identify the user.
                           .header("Rx-User", "RxJava")
                           // Reactive invoker.
@@ -71,6 +73,9 @@ public class ObservableAgentResource {
                           // Return a list of destinations.
                           .get(new GenericType<List<Destination>>() {
                           });
+        
+        System.out.println("observable visited request row end");
+        return o;
     }
 
     private Observable<List<Recommendation>> recommended() {
@@ -90,6 +95,8 @@ public class ObservableAgentResource {
                 // Remember emitted items for dependant requests.
                 .cache();
 
+        System.out.println("observable recommended request row end");
+        
         forecast.register(RxObservableInvokerProvider.class);
 
         // Forecasts. (depend on recommended destinations)
@@ -99,6 +106,8 @@ public class ObservableAgentResource {
                         .request().rx(RxObservableInvoker.class).get(Forecast.class)
         );
 
+        System.out.println("observable forecasts request row end");
+        
         calculation.register(RxObservableInvokerProvider.class);
 
         // Calculations. (depend on recommended destinations)
@@ -107,6 +116,8 @@ public class ObservableAgentResource {
                         .request().rx(RxObservableInvoker.class).get(Calculation.class)
                         );
 
+        System.out.println("observable calculations request row end");
+        
         return Observable.zip(recommended, forecasts, calculations, Recommendation::new).toList();
     }
 

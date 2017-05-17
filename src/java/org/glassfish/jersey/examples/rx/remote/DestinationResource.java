@@ -84,14 +84,14 @@ public class DestinationResource {
     @ManagedAsync
     @Path("visited")
     public List<Destination> visited(@HeaderParam("Rx-User") @DefaultValue("KO") final String user) {
-                
+        System.out.println("REST server: visited start: " + user); 
         // Simulate long-running operation.
         Helper.sleep();
 
         if (!VISITED.containsKey(user)) {
             VISITED.put(user, Helper.getCountries(5));
         }
-        System.out.println("visited: " + user);
+        System.out.println("REST server: visited end: " + user);
         return Lists.transform(VISITED.get(user), Destination::new);
     }
 
@@ -100,13 +100,14 @@ public class DestinationResource {
     @Path("recommended")
     public List<Destination> recommended(@HeaderParam("Rx-User") @DefaultValue("KO") final String user,
                                          @QueryParam("limit") @DefaultValue("5") final int limit) {
+        System.out.println("REST server: recommended start: " + user); 
         // Simulate long-running operation.
         Helper.sleep();
 
         if (!VISITED.containsKey(user)) {
             VISITED.put(user, Helper.getCountries(5));
         }
-        System.out.println("recommended: " + user);
+        System.out.println("REST server: recommended end: " + user); 
         return Lists.transform(Helper.getCountries(limit, VISITED.get(user)), Destination::new);
     }
 }

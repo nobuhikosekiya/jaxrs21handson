@@ -63,10 +63,10 @@ public class ForecastResource {
     @Path("/{destination}")
     public Forecast forecast(@PathParam("destination") final String destination) {
 
-         System.out.println("forecast: start: " + destination);
+         System.out.println("REST Server forecast: start: " + destination);
         // Simulate long-running operation.
         Helper.sleep(350);
-        System.out.println("forcast end: " + destination);
+        System.out.println("REST Server forcast end: " + destination);
         return new Forecast(destination, Helper.getForecast());
     }
 }
